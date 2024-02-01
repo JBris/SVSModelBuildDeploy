@@ -58,19 +58,7 @@ jobs:
       
     - name: run
       run: dotnet run --project TestConsole/TestsConsole.csproj
-
-    - name: ls
-      run: ls
-      
-    - name: ls
-      run: ls ConsoleApp1/bin/Debug/net6.0
-            
-    - name: ls
-      run: ls OutputFiles
-            
-    - name: find CSV file
-      run: find . -type f -name "*.csv"  
-      
+     
     - name: run python 
       run: python TestModel/testGraph/testGraph/testGraph.py     
           
