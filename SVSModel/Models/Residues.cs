@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Microsoft.Data.Analysis;
 using SVSModel.Configuration;
 
 namespace SVSModel.Models
@@ -20,46 +23,75 @@ namespace SVSModel.Models
         {
             DateTime[] simDates = rswc.Keys.ToArray();
             Dictionary<DateTime, double> NResidues = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> PresRoot = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> PresStover = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> PresFieldLoss = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> CresRoot = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> CresStover = Functions.dictMaker(simDates, new double[simDates.Length]);
-            Dictionary<DateTime, double> cresFieldLoss = Functions.dictMaker(simDates, new double[simDates.Length]);
 
-            List<Dictionary<DateTime, double>> Residues = new List<Dictionary<DateTime, double>> { PresRoot, PresStover, PresFieldLoss, CresRoot, CresStover, cresFieldLoss };
+            ///Set up each cohort of residue
+            DataFrame allCropParams = Crop.LoadCropCoefficients();
+            CropParams priorCropParams = Crop.ExtractCropParams(config.Prior.CropNameFull, allCropParams);
+            residue PresRoot = new residue(config.Prior.ResRoot, priorCropParams.RootN, config.Prior.HarvestDate, simDates, rswc, meanT);
+            residue PresStover = new residue(config.Prior.ResStover, priorCropParams.StoverN, config.Prior.HarvestDate, simDates, rswc, meanT);
+            residue PresFieldLoss = new residue(config.Prior.ResFieldLoss, priorCropParams.ProductN, config.Prior.HarvestDate, simDates, rswc, meanT);
+            
+            CropParams currentCropParams = Crop.ExtractCropParams(config.Current.CropNameFull, allCropParams);
+            residue CresRoot = new residue(config.Current.ResRoot, currentCropParams.RootN, config.Current.HarvestDate, simDates, rswc, meanT);
+            residue CresStover = new residue(config.Current.ResStover, currentCropParams.StoverN, config.Current.HarvestDate, simDates, rswc, meanT);
+            residue CresFieldLoss = new residue(config.Current.ResFieldLoss, currentCropParams.ProductN, config.Current.HarvestDate, simDates, rswc, meanT);
+
+            List<residue> Residues = new List<residue> { PresRoot, PresStover, PresFieldLoss, CresRoot, CresStover, CresFieldLoss };
+            double[] TotalNetYesterday = new double[] {0,0,0,0,0,0};
             foreach (DateTime d in simDates)
             {
-                //Decompose residues each day
-                foreach (Dictionary<DateTime, double> res in Residues)
+                double[] TotalNetToday = new double[6];
+                int resInd = 0;
+                foreach (residue r in Residues)
                 {
-                    if (d == simDates[0])
-                    {
-                        res[d] = 0.2;
-                    }
-                    else
-                    {
-                        res[d] = res[d.AddDays(-1)];
-                    }
-                    double mineralisation = res[d] * 0.012 * meanT[d] * rswc[d];
-                    res[d] -= mineralisation;
-                    NResidues[d] += mineralisation;
+                    TotalNetToday[resInd] += r.NetMineralisation[d];
+                    resInd += 1;
                 }
-                //Add residues to system at harvest
-                if (d == config.Prior.HarvestDate)
-                {
-                    PresRoot[d] = config.Prior.ResRoot;
-                    PresStover[d] = config.Prior.ResStover;
-                    PresFieldLoss[d] = config.Prior.FieldLoss;
-                }
-                if (d == config.Current.HarvestDate)
-                {
-                    PresRoot[d] = config.Current.ResRoot;
-                    PresStover[d] = config.Current.ResStover;
-                    PresFieldLoss[d] = config.Current.ResFieldLoss;
-                }
+                NResidues[d] = TotalNetToday.Sum() - TotalNetYesterday.Sum();
+                TotalNetYesterday = TotalNetToday;
             }
+            
             return NResidues;
         }
+
+
+    }
+
+    public class residue
+    {
+        public static string name()
+        {
+            return typeof(residue).Name;
+        }
+        private double ANm { get; set; }
+        private double ANi { get; set; } 
+        private double Km { get; set; } 
+        private double Ki { get; set; }
+        
+        public Dictionary<DateTime, double> NetMineralisation { get; set; }
+
+        public residue(double amountN, double Nconc, DateTime additionDate, DateTime[] simDates, Dictionary<DateTime, double> rswc, Dictionary<DateTime, double> meanT)
+        {
+            double CNR = 40/Nconc;
+            this.ANm = amountN * 0.8;
+            this.ANi = amountN * (CNR * 2.5)/100;
+            this.Km = 0.97 * Math.Exp(-0.12*CNR) + 0.03;
+            this.Ki = 0.9 * Math.Exp(-0.12 * CNR) + 0.1; ;
+            this.NetMineralisation = Functions.dictMaker(simDates, new double[simDates.Length]);
+            double sigmaFtm = 0;
+            foreach (DateTime d in simDates)
+            {
+                if (d >= additionDate)
+                {
+                    double Ft = SoilOrganic.LloydTaylorTemp(meanT[d]);
+                    double Fm = SoilOrganic.QiuBeareCurtinWater(rswc[d]);
+                    sigmaFtm += (Ft * Fm);
+                    double mineralisation = ANm * (1 - Math.Exp(-Km * sigmaFtm));
+                    double imobilisation = ANi * (1 - Math.Exp(-Ki * sigmaFtm));
+                    NetMineralisation[d] = mineralisation - imobilisation;
+                }
+            }
+        }
+
     }
 }

@@ -92,17 +92,19 @@ namespace SVSModel.Models
             Config config)
         {
             DateTime startApplicationDate = config.Prior.HarvestDate.AddDays(1); //Earliest start to schedulling is establishment date
+            DateTime endApplicationDate = config.Following.HarvestDate;
             //if (testResults.Keys.Count > 0)
             //    startApplicationDate = testResults.Keys.Last().AddDays(1); //If test results specified after establishment that becomes start of schedulling date
             double efficiency = config.Field.Efficiency;
             foreach (DateTime d in appliedN.Keys)
             {
-                if (d >= startApplicationDate)
+                if ((d >= startApplicationDate)&&(d <= endApplicationDate))
                 {
                     AddFertiliser(ref soilN, appliedN[d] * efficiency, d, config);
+                    fertiliserN[d] = appliedN[d];
+                    lostN[d] = appliedN[d] * (1 - efficiency);
                 }
-                fertiliserN[d] = appliedN[d];
-                lostN[d] = appliedN[d] * (1 - efficiency);
+
             }
         }
 

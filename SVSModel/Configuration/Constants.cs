@@ -55,12 +55,22 @@ namespace SVSModel.Configuration
         };
 
         /// <summary>Dictionary containing conversion from specified rainfall conditions to a factor </summary>
-        public static readonly Dictionary<string, double> RainFactors = new Dictionary<string, double>
+        public static readonly Dictionary<string, double> ICRainFactors = new Dictionary<string, double>
         {
             { "Very Wet", 1.7 },
             { "Wet", 1.35},
             { "Typical", 1.0 },
             { "Dry", 0.65 },
+            { "Very Dry", 0.3 }
+        };
+
+        /// <summary>Dictionary containing conversion from specified rainfall conditions to a factor </summary>
+        public static readonly Dictionary<string, double> PPRainFactors = new Dictionary<string, double>
+        {
+            { "Very Wet", 1.0 },
+            { "Wet", 0.95},
+            { "Typical", 0.9 },
+            { "Dry", 0.6 },
             { "Very Dry", 0.3 }
         };
 

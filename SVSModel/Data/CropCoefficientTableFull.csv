@@ -79,3 +79,8 @@ Lupin Green manure General,72,Green manure,Green manure,Lupin,General,Fabaceae ,
 Phacelia Green manure General,73,Green manure,Green manure,Phacelia,General,Boraginaceae ,Phacelia,tanacetifolia,,Phacelia tanacetifolia ,tanacetifolia ,Seed,Apr,Vegetative,Sep,5,t/ha,Standing DM,1000000,Dry,0,0,1,0,0,0.1,1,1,1,0.9,3,3
 Rye corn Green manure General,74,Green manure,Green manure,Rye corn,General,Poaceae ,Secale,cereale,,Secale cereale ,cereale ,Seed,Apr,EarlyReproductive,Sep,8,t/ha,Standing DM,1000000,Dry,0,0,1,0,0,0.1,1.5,1,1,0.9,3,3
 Mustard Green manure General,75,Green manure,Green manure,Mustard,General,Brassicaceae,Sinapis,alba,,Sinapis alba ,alba ,Seed,Apr,EarlyReproductive,Sep,7,t/ha,Standing DM,1000000,Dry,0,0,1,0,0,0.1,1.2,1,1.1,0.8,3,3
+TestResidue05,24,Grain,Cereal,Wheat,Feed,Poaceae ,Triticum,astevium,,Triticum astevium ,astevium ,Seed,Apr,Maturity,Feb,12,t/ha,Saleable grain ,50000,Total,0,0,0.5,0,15,0.1,1.5,1,1,0.5,0.5,0.5
+TestResidue10,24,Grain,Cereal,Wheat,Feed,Poaceae ,Triticum,astevium,,Triticum astevium ,astevium ,Seed,Apr,Maturity,Feb,12,t/ha,Saleable grain ,50000,Total,0,0,0.5,0,15,0.1,1.5,1,1,1,1,1
+TestResidue15,24,Grain,Cereal,Wheat,Feed,Poaceae ,Triticum,astevium,,Triticum astevium ,astevium ,Seed,Apr,Maturity,Feb,12,t/ha,Saleable grain ,50000,Total,0,0,0.5,0,15,0.1,1.5,1,1,1.5,1.5,1.5
+TestResidue30,24,Grain,Cereal,Wheat,Feed,Poaceae ,Triticum,astevium,,Triticum astevium ,astevium ,Seed,Apr,Maturity,Feb,12,t/ha,Saleable grain ,50000,Total,0,0,0.5,0,15,0.1,1.5,1,1,3,3,3
+TestResidue45,24,Grain,Cereal,Wheat,Feed,Poaceae ,Triticum,astevium,,Triticum astevium ,astevium ,Seed,Apr,Maturity,Feb,12,t/ha,Saleable grain ,50000,Total,0,0,0.5,0,15,0.1,1.5,1,1,4.5,4.5,4.5
