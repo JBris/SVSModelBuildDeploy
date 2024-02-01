@@ -44,9 +44,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --no-cache-dir -r requirements.txt
-
-    - name: Create a temporary artifact downloads folder for graphs
-      run: mkdir graphs       
       
     - name: Restore dependencies
       run: dotnet restore
