@@ -46,6 +46,10 @@ namespace TestModel
         public static void runTestSet(string path, string set)
         {
             string[] filePaths = Directory.GetFiles(Path.Join(path, set, "Outputs"));
+            if (!Directory.Exists(filePaths))
+            {
+                System.IO.Directory.CreateDirectory(filePaths);
+            }
             foreach (string filePath in filePaths)
                 File.Delete(filePath);
 
