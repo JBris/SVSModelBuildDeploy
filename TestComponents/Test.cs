@@ -22,6 +22,11 @@ namespace TestModel
 
             //Delete graphs from previous test run
             string graphFolder = Path.Join(Directory.GetCurrentDirectory(), "TestGraphs", "Outputs");
+            if (!Directory.Exists(graphFolder))
+            {
+                System.IO.Directory.CreateDirectory(graphFolder);
+            }
+            
             string[] graphPaths = Directory.GetFiles(graphFolder);
             foreach (string graphPath in graphPaths)
                 File.Delete(graphPath);
